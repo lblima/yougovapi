@@ -1,76 +1,59 @@
+import bodyParser from "body-parser";
 import express from "express";
 import { Express } from "express-serve-static-core";
-import * as bodyParser from "body-parser";
+import * as OpenApiValidator from "express-openapi-validator";
+import { connector, summarise } from "swagger-routes-express";
+import YAML from "yamljs";
 
-import {
-  getAllData,
-  getDataByName,
-  createTeam,
-  updateTeam,
-} from "./datasource";
+import * as api from "./api/controllers";
 
 export async function createServer(): Promise<Express> {
-  const app = express();
-  app.use(bodyParser.json());
+  const yamlSpecFile = "./config/openapi.yml";
+  const apiDefinition = YAML.load(yamlSpecFile);
+  const apiSummary = summarise(apiDefinition);
 
-  app.get("/teams", async (req, res) => {
-    const data = await getAllData();
-    res.send(data);
-  });
+  // tslint:disable-next-line: no-console
+  console.info(apiSummary);
 
-  app.get("/teams/:team_name", async (req, res) => {
-    const team = await getDataByName(req.params.team_name);
+  const server = express();
+  server.use(bodyParser.json());
 
-    if (team === undefined) {
-      res.status(404).send({ message: "Team not found" });
-    } else {
-      res.send(team);
-    }
-  });
+  // setup API validator
+  const validatorOptions = {
+    apiSpec: yamlSpecFile,
+    validateRequests: true,
+    validateResponses: true,
+  };
 
-  app.post("/teams", async (req, res) => {
-    if (!req.body.name) {
-      return res.status(400).send({
-        message: "name is required",
-      });
-    } else if (!req.body.img) {
-      return res.status(400).send({
-        message: "img is required",
-      });
-    }
+  server.use(OpenApiValidator.middleware(validatorOptions));
 
-    const existingTeam = await getDataByName(req.body.name);
-
-    if (existingTeam !== undefined)
-      return res.status(400).send({
-        message: "This team already exists",
-      });
-
-    createTeam(req.body);
-    res.status(201).send({ message: "Team created successfully" });
-  });
-
-  app.put("/teams", async (req, res) => {
-    if (!req.body.name) {
-      return res.status(400).send({
-        message: "name is required",
-      });
-    } else if (!req.body.img) {
-      return res.status(400).send({
-        message: "img is required",
+  server.use(
+    (
+      err: any,
+      req: express.Request,
+      res: express.Response,
+      next: express.NextFunction
+    ) => {
+      res.status(err.status).json({
+        error: {
+          type: "request_validation",
+          message: err.message,
+          errors: err.errors,
+        },
       });
     }
+  );
 
-    const existingTeam = await getDataByName(req.body.name);
-
-    if (existingTeam === undefined)
-      return res.status(404).send({
-        message: "Team not found",
-      });
-
-    updateTeam(req.body);
-    res.status(201).send({ message: "Team updated successfully" });
+  const connect = connector(api, apiDefinition, {
+    onCreateRoute: (method: string, descriptor: any[]) => {
+      // tslint:disable-next-line: no-console
+      console.log(
+        `${method}: ${descriptor[0]} : ${(descriptor[1] as any).name}`
+      );
+    },
   });
 
-  return app;
+  connect(server);
+
+  return server;
 }

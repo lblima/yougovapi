@@ -25,12 +25,12 @@ const seedYouGovTeamsCache = async () => {
   }
 };
 
-const getAllData = async () => {
+const getAllTeams = async () => {
   await seedYouGovTeamsCache();
   return youGovDataCache.data;
 };
 
-const getDataByName = async (name: string): Promise<Team> => {
+const getTeamByName = async (name: string): Promise<Team> => {
   await seedYouGovTeamsCache();
   return youGovDataCache.get(name) as Team;
 };
@@ -48,4 +48,4 @@ const updateTeam = async (team: Team) => {
   youGovDataCache.set(existingTeam.name, existingTeam);
 };
 
-export { getAllData, getDataByName, createTeam, updateTeam };
+export { getAllTeams, getTeamByName, createTeam, updateTeam };

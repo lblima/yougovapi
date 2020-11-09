@@ -1,0 +1,114 @@
+openapi: 3.0.3
+info:
+  title: YouGov API example
+  description: YouGov API example declaration
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: leonardo.bruno@outlook.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: /api/v1
+
+tags:
+  - name: teams
+    description: Teams API
+
+paths:
+  /teams/{team_name}:
+    get:
+      description: Returns a specific team
+      operationId: getByName
+      parameters:
+        - name: team_name
+          required: true
+          in: path
+          description: The name of the team
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTeamByName"
+
+  /teams:
+    get:
+      description: Returns all available teams
+      operationId: getAll
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAllTeamsResponse"
+    post:
+      description: Add a team to the list
+      operationId: add
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                img:
+                  type: string
+      responses:
+        201:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    put:
+      description: Update a team in the list
+      operationId: update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                img:
+                  type: string
+      responses:
+        204:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+components:
+  schemas:
+    GetAllTeamsResponse:
+      type: object
+      # items:
+      #   type: object
+      #   properties:
+      #     name:
+      #       type: string
+      #     img:
+      #       type: string
+    GetTeamByName:
+      type: object
