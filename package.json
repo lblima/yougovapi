@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node-dev --respawn src/app.ts",
-    "test:unit": "istanbul cover jest"
+    "test": "istanbul cover jest"
   },
   "keywords": [],
   "author": "",
