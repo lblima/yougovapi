@@ -46,13 +46,14 @@ export async function add(
 
   const existingTeam = await getExistingTeam(req.body.name);
 
-  if (existingTeam !== undefined)
+  if (existingTeam !== undefined) {
     res.status(400).send({
       message: "This team already exists",
     });
-
-  createTeam(req.body);
-  res.status(201).send({ message: "Team created successfully" });
+  } else {
+    createTeam(req.body);
+    res.status(201).send({ message: "Team created successfully" });
+  }
 }
 
 export async function update(
@@ -71,11 +72,12 @@ export async function update(
 
   const existingTeam = await getExistingTeam(req.body.name);
 
-  if (existingTeam === undefined)
+  if (existingTeam === undefined) {
     res.status(404).send({
       message: "Team not found",
     });
-
-  updateTeam(req.body);
-  res.status(204).send({ message: "Team updated successfully" });
+  } else {
+    updateTeam(req.body);
+    res.status(204).send({ message: "Team updated successfully" });
+  }
 }
