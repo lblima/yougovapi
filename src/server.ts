@@ -51,6 +51,9 @@ export async function createServer(): Promise<Express> {
         `${method}: ${descriptor[0]} : ${(descriptor[1] as any).name}`
       );
     },
+    security: {
+      bearerAuth: api.auth,
+    },
   });
 
   connect(server);

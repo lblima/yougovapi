@@ -1,5 +1,5 @@
 import * as express from "express";
-
+import { writeJsonResponse } from "../../createResponse";
 import {
   getAllTeams,
   getTeamByName,
@@ -13,8 +13,8 @@ export async function getAll(
   req: express.Request,
   res: express.Response
 ): Promise<void> {
-  const data = await getAllTeams();
-  res.send(data);
+  const teams = await getAllTeams();
+  writeJsonResponse(res, 200, teams);
 }
 
 export async function getByName(
@@ -24,9 +24,9 @@ export async function getByName(
   const team = await getExistingTeam(req.params.team_name);
 
   if (team === undefined) {
-    res.status(404).send({ message: "Team not found" });
+    writeJsonResponse(res, 404, { message: "Team not found" });
   } else {
-    res.send(team);
+    writeJsonResponse(res, 200, team);
   }
 }
 
@@ -35,24 +35,18 @@ export async function add(
   res: express.Response
 ): Promise<void> {
   if (!req.body.name) {
-    res.status(400).send({
-      message: "name is required",
-    });
+    writeJsonResponse(res, 400, { message: "name is required" });
   } else if (!req.body.img) {
-    res.status(400).send({
-      message: "img is required",
-    });
+    writeJsonResponse(res, 400, { message: "img is required" });
   }
 
   const existingTeam = await getExistingTeam(req.body.name);
 
   if (existingTeam !== undefined) {
-    res.status(400).send({
-      message: "This team already exists",
-    });
+    writeJsonResponse(res, 400, { message: "This team already exists" });
   } else {
     createTeam(req.body);
-    res.status(201).send({ message: "Team created successfully" });
+    writeJsonResponse(res, 201, { message: "Team created successfully" });
   }
 }
 
@@ -61,23 +55,17 @@ export async function update(
   res: express.Response
 ): Promise<void> {
   if (!req.body.name) {
-    res.status(400).send({
-      message: "name is required",
-    });
+    writeJsonResponse(res, 400, { message: "name is required" });
   } else if (!req.body.img) {
-    res.status(400).send({
-      message: "img is required",
-    });
+    writeJsonResponse(res, 400, { message: "img is required" });
   }
 
   const existingTeam = await getExistingTeam(req.body.name);
 
   if (existingTeam === undefined) {
-    res.status(404).send({
-      message: "Team not found",
-    });
+    writeJsonResponse(res, 404, { message: "Team not found" });
   } else {
     updateTeam(req.body);
-    res.status(204).send({ message: "Team updated successfully" });
+    writeJsonResponse(res, 204, { message: "Team updated successfully" });
   }
 }
