@@ -1,5 +1,5 @@
 import * as express from "express";
-import { writeJsonResponse } from "../../createResponse";
+import { writeJsonResponse } from "../../utils/createResponse";
 import {
   getAllTeams,
   getTeamByName,
