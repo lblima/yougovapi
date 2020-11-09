@@ -22,6 +22,10 @@ put: /api/v1/teams
 
 *- update one team of the list **(only the image)**. If the team do not exists, return 404: {"Team not found"}*
 
+**Authorization**
+
+In order to acccess the API we should pass a Bearer Token with the value: **yougovToken**
+
 ### How to test it
 
 yarn test
