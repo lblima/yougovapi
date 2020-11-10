@@ -4,6 +4,8 @@ This API is a list of premier league football teams. This is the dataset to be u
 
 There is a endpoint **/teams** where we can return the full dataset or an individual by passing the name of the team. Also we are able to add and update teams.
 
+The **pagination** is not implemented in this API.
+
 **Endpoints**
 
 get: /api/v1/teams/:team_name 
