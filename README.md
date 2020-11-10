@@ -28,7 +28,7 @@ In order to acccess the API we should pass a Bearer Token with the value: **youg
 
 ### How to test it
 
-yarn test
+yarn && yarn test
 
 ### How to run it
 
