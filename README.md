@@ -32,4 +32,4 @@ yarn && yarn test
 
 ### How to run it
 
-yarn start
+yarn && yarn start
